@@ -95,55 +95,72 @@ def main():
     #Zoho Connection cariables, with default values, for refresh token, client id, and client secret.
     try:
         ZOHO_DEPT_ID = os.getenv("ZOHO_DEPT_ID")
+        if  ZOHO_DEPT_ID is None:
+            ZOHO_DEPT_ID = input("No department ID for Zoho found. Please enter one now:")
+            with open(".env") as enviro:
+                enviro.write(f"ZOHO_DEPT_ID={ZOHO_DEPT_ID}")
+                print("Zoho Department ID written to .env. Please check this file on subsequent runs for valid input.")
     except:
-        ZOHO_DEPT_ID = input("No department ID for Zoho found. Please enter one now:")
-        with open(".env") as enviro:
-            enviro.write(f"ZOHO_DEPT_ID={ZOHO_DEPT_ID}")
+        print("Error occured obtaining the department ID.")
 
     try:
         AZURE_ID = os.getenv("AZURE_ID")
+        if AZURE_ID is None:
+            AZURE_ID = input("No Azure ID. Please enter one now:")
+            with open(".env") as enviro:
+                enviro.write(f"AZURE_ID={AZURE_ID}")
+                print("Azure ID written to .env. Please check this file on subsequent runs for valid input.")
     except:
-        AZURE_ID = input("No Azure ID. Please enter one now:")
-        with open(".env") as enviro:
-            enviro.write(f"AZURE_ID={AZURE_ID}")
+        print("Error occured obtaining the Azure ID.")
 
     try:
         GRAPH_ID= os.getenv("GRAPH_ID")
+        if GRAPH_ID is None:
+            GRAPH_ID= input("No Client ID for MS Graph found. Please enter one now:")
+            with open(".env") as enviro:
+                enviro.write(f"GRAPH_ID={GRAPH_ID}")
+                print("Graph ID written to .env. Please check this file on subsequent runs for valid input.")
     except:
-        GRAPH_ID= input("No Client ID for MS Graph found. Please enter one now:")
-        with open(".env") as enviro:
-            enviro.write(f"GRAPH_ID={GRAPH_ID}")
+        print("Error occured obtaining the Graph ID.")
 
     try:
         GRAPH_SECRET = os.getenv("GRAPH_SECRET")
+        if GRAPH_SECRET is None:
+            GRAPH_SECRET = input("No Client Secretfor MS Graph found. Please enter one now:")
+            with open(".env") as enviro:
+                enviro.write(f"GRAPH_SECRET={GRAPH_SECRET}")
+                print("Graph secret written to .env. Please check this file on subsequent runs for valid input.")
     except:
-        GRAPH_SECRET = input("No Client Secretfor MS Graph found. Please enter one now:")
-        with open(".env") as enviro:
-            enviro.write(f"GRAPH_SECRET={GRAPH_SECRET}")
+        print("Error occured obtaining the Graph secret.")
 
     try:
         SW_TOKEN = os.getenv("SW_TOKEN")
+        if SW_TOKEN is None:
+            SW_TOKEN = input("No SolarWinds token found. Please enter one now:")
+            with open(".env") as enviro:
+                enviro.write(f"SW_TOKEN={SW_TOKEN}")
+                print("Solarwinds Token written to .env. Please check this file on subsequent runs for valid input.")
     except:
-        SW_TOKEN = input("No SolarWinds token found. Please enter one now:")
-        with open(".env") as enviro:
-            enviro.write(f"SW_TOKEN={SW_TOKEN}")
+        print("Error occured obtaining the SolarWinds token.")
 
     # Access the Zoho variables
     try:
         ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_ACC_TO_REFRESH_TOKEN")
         ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
         ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
+        if ZOHO_REFRESH_TOKEN is None or ZOHO_CLIENT_ID is None or ZOHO_CLIENT_SECRET is None:
+            print("No access or refresh tokens defined." )
+            ZOHO_CLIENT_ID = input("Please enter your Client ID:")
+            ZOHO_CLIENT_SECRET = input("Please enter your Client Secret:")
+            auth_code = input("Please enter the authentication code:")
+            ZOHO_REFRESH_TOKEN = zoho_produce_acc_tok(auth_code,ZOHO_CLIENT_SECRET,ZOHO_CLIENT_ID)
+            with open(".env") as enviro:
+                enviro.write(f"ZOHO_CLIENT_ID={ZOHO_CLIENT_ID}")
+                enviro.write(f"ZOHO_CLIENT_SECRET={ZOHO_CLIENT_SECRET}")
+                enviro.write(f"ZOHO_REFRESH_TOKEN={ZOHO_REFRESH_TOKEN}")
+                print("Wrote Zoho information to .env. Please check this file on subsequent runs for valid input.")
     except Exception as e:
         print(e)
-        print("No access or refresh tokens defined." )
-        ZOHO_CLIENT_ID = input("Please enter your Client ID:")
-        ZOHO_CLIENT_SECRET = input("Please enter your Client Secret:")
-        auth_code = input("Please enter the authentication code:")
-        ZOHO_REFRESH_TOKEN = zoho_produce_acc_tok(auth_code,ZOHO_CLIENT_SECRET,ZOHO_CLIENT_ID)
-        with open(".env") as enviro:
-            enviro.write(f"ZOHO_CLIENT_ID={ZOHO_CLIENT_ID}")
-            enviro.write(f"ZOHO_CLIENT_SECRET={ZOHO_CLIENT_SECRET}")
-            enviro.write(f"ZOHO_REFRESH_TOKEN={ZOHO_REFRESH_TOKEN}")
     REFRESH_TOKEN = ZOHO_REFRESH_TOKEN
     CLIENT_ID = ZOHO_CLIENT_ID
     CLIENT_SECRET = ZOHO_CLIENT_SECRET
